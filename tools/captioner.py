@@ -11,7 +11,7 @@ from tqdm import tqdm
 
 # Configuration
 MODEL_NAME = "Qwen/Qwen2-VL-72B-Instruct"
-DATASET_PATH = './yfcc15m'
+DATASET_PATH = 'justram/yfcc100m_openai_subset'
 DB_PATH = 'example.db'
 BATCH_SIZE = 32  # Adjust based on available memory
 
