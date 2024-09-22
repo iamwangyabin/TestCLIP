@@ -24,7 +24,6 @@ device = torch.device("cuda")
 model = Qwen2VLForConditionalGeneration.from_pretrained(
     "Qwen/Qwen2-VL-7B-Instruct",
     torch_dtype=torch.bfloat16,
-    attn_implementation="flash_attention_2",
     device_map="auto",
 )
 processor = AutoProcessor.from_pretrained(MODEL_NAME)
