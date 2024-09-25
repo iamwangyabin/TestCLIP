@@ -1,0 +1,60 @@
+base_model: "ViT-B/32"
+name: "cc12m"
+log_scale: 0.0                # Initial logit scale (equivalent to np.log(1.0))
+
+
+train:
+  gpu_ids: [2,3]
+  train_epochs: 10
+  precision: 16
+  check_val_every_n_epoch: 1
+  seed: 1995
+  optimizer:
+    _target_: torch.optim.AdamW
+    _partial_: True
+    lr: 1e-6
+    weight_decay: 1e-3
+    betas: [0.9, 0.999]
+
+  scheduler:
+    _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+    _partial_: True
+    T_max: ${train.train_epochs}
+
+
+datasets:
+  train:
+    source:
+      - { target: data.CC12M,
+          path_or_name: 'nebula/cc12m',
+          split: 'train', }
+
+    batch_size: 256
+    loader_workers: 32
+    trsf:
+      - _target_: torchvision.transforms.Resize
+        size: 256
+      - _target_: torchvision.transforms.RandomResizedCrop
+        size: 224
+      - _target_: torchvision.transforms.ToTensor
+      - _target_: torchvision.transforms.Normalize
+        mean: [ 0.48145466, 0.4578275, 0.40821073 ]
+        std: [ 0.26862954, 0.26130258, 0.27577711 ]
+
+  val:
+    source:
+      - { target: data.MSCOCO,
+          path_or_name: 'clip-benchmark/wds_mscoco_captions2017',
+          split: 'test', }
+
+    batch_size: 128
+    loader_workers: 32
+    trsf:
+      - _target_: torchvision.transforms.Resize
+        size: 256
+      - _target_: torchvision.transforms.RandomResizedCrop
+        size: 224
+      - _target_: torchvision.transforms.ToTensor
+      - _target_: torchvision.transforms.Normalize
+        mean: [ 0.48145466, 0.4578275, 0.40821073 ]
+        std: [ 0.26862954, 0.26130258, 0.27577711 ]

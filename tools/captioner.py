@@ -4,7 +4,7 @@ from PIL import Image
 import io
 import base64
 import torch
-from datasets import load_dataset
+from data import load_dataset
 import random
 import sqlite3
 from tqdm import tqdm
