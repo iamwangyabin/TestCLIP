@@ -83,6 +83,7 @@ def main(conf):
         logger=wandb_logger,
         max_epochs=conf.train.train_epochs,
         accelerator="gpu" if torch.cuda.is_available() else "cpu",
+        num_nodes=1,
         devices=conf.train.gpu_ids,
         callbacks=[checkpoint_callback, lr_monitor],
         check_val_every_n_epoch=conf.train.check_val_every_n_epoch,
