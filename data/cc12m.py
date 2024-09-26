@@ -11,12 +11,15 @@ from tqdm import tqdm
 from datasets import load_dataset
 from torchvision import transforms
 
-
+load_dataset('nebula/cc12m')
 Image.MAX_IMAGE_PIXELS = None
 
 class CC12M(Dataset):
     def __init__(self, path_or_name='./cc12m', split='train', transform=None, single_caption=True):
-        self.raw_dataset = load_dataset(path_or_name)[split]
+        if split is not None:
+            self.raw_dataset = load_dataset(path_or_name)[split]
+        else:
+            self.raw_dataset = load_dataset(path_or_name)
         if transform is None:
             self.transform = transforms.Compose([
                 transforms.Resize((224, 224)),  # Resize to 224x224 pixels

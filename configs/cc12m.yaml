@@ -4,7 +4,7 @@ log_scale: 0.0                # Initial logit scale (equivalent to np.log(1.0))
 
 
 train:
-  gpu_ids: [2,3]
+  gpu_ids: [0,1,2,3]
   train_epochs: 10
   precision: 16
   check_val_every_n_epoch: 1
@@ -27,9 +27,9 @@ datasets:
     source:
       - { target: data.CC12M,
           path_or_name: 'nebula/cc12m',
-          split: 'train', }
+          split: None, }
 
-    batch_size: 256
+    batch_size: 512
     loader_workers: 32
     trsf:
       - _target_: torchvision.transforms.Resize
