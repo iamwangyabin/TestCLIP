@@ -29,7 +29,7 @@ datasets:
           path_or_name: 'nebula/cc12m',
           split: 'train', }
 
-    batch_size: 256
+    batch_size: 512
     loader_workers: 32
     trsf:
       - _target_: torchvision.transforms.Resize

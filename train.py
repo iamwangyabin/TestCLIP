@@ -47,7 +47,6 @@ def build_dataloader(conf):
 
 
 def main(conf):
-    # import pdb;pdb.set_trace()
     train_loader, val_loader = build_dataloader(conf)
 
     # Create a unique name for this run
@@ -110,5 +109,5 @@ if __name__ == '__main__':
     args, cfg_args = parser.parse_known_args()
     conf = load_config_with_cli(args.cfg, args_list=cfg_args)
     conf = hydra.utils.instantiate(conf)
-
+    torch.set_float32_matmul_precision('medium')
     main(conf)
