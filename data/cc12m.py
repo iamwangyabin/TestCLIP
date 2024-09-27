@@ -44,6 +44,7 @@ class CC12M(Dataset):
     #     if self.transform:
     #         image = self.transform(image)
     #     return image, caption
+
     def __getitem__(self, index):
         item = self.raw_dataset[index]
         caption = item['txt']
@@ -51,5 +52,6 @@ class CC12M(Dataset):
             image = Image.open(buffer).convert('RGB')
             if self.transform:
                 image = self.transform(image)
+        del item 
         return image, caption
 
