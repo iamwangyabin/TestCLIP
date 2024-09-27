@@ -36,13 +36,20 @@ class CC12M(Dataset):
     def __len__(self):
         return self.length
 
+    # def __getitem__(self, index):
+    #     item = self.raw_dataset[index]
+    #     caption = item['txt']
+    #     buffer = io.BytesIO(item['webp'])
+    #     image = Image.open(buffer).convert('RGB')
+    #     if self.transform:
+    #         image = self.transform(image)
+    #     return image, caption
     def __getitem__(self, index):
         item = self.raw_dataset[index]
         caption = item['txt']
-        buffer = io.BytesIO(item['webp'])
-        image = Image.open(buffer).convert('RGB')
-        if self.transform:
-            image = self.transform(image)
+        with io.BytesIO(item['webp']) as buffer:
+            image = Image.open(buffer).convert('RGB')
+            if self.transform:
+                image = self.transform(image)
         return image, caption
-
 
