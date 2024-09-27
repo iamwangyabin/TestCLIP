@@ -47,14 +47,16 @@ class CLIPLightningModule(LightningModule):
         text_long = longclip.tokenize(text_long, truncate=True).to(self.device)
 
         image_features, text_features = self.forward(image, text_long)
-        image_features_all = self.all_gather(image_features)  # Shape: [world_size, batch_size, feature_dim]
-        text_features_all = self.all_gather(text_features)    # Shape: [world_size, batch_size, feature_dim]
+        # image_features_all = self.all_gather(image_features)  # Shape: [world_size, batch_size, feature_dim]
+        # text_features_all = self.all_gather(text_features)    # Shape: [world_size, batch_size, feature_dim]
         # Flatten the gathered features
-        image_features_all = image_features_all.view(-1, image_features_all.size(-1))
-        text_features_all = text_features_all.view(-1, text_features_all.size(-1))
-        # Compute similarity matrices
-        sim_i2tl = torch.matmul(image_features, text_features_all.T)  # Image-to-Text
-        sim_tl2i = torch.matmul(image_features_all, text_features.T).T  # Text-to-Image
+        # image_features_all = image_features_all.view(-1, image_features_all.size(-1))
+        # text_features_all = text_features_all.view(-1, text_features_all.size(-1))
+
+        # sim_i2tl = torch.matmul(image_features, text_features_all.T)  # Image-to-Text
+        # sim_tl2i = torch.matmul(image_features_all, text_features.T).T  # Text-to-Image
+        sim_i2tl = torch.matmul(image_features, text_features.T)  # Image-to-Text
+        sim_tl2i = torch.matmul(image_features, text_features.T).T  # Text-to-Image
 
         # Scale similarities using logit_scale
         logit_scale = self.clip_model.logit_scale.exp()
@@ -64,7 +66,7 @@ class CLIPLightningModule(LightningModule):
         # Determine batch size and world size
         batch_size = image.size(0)
         targets = torch.arange(batch_size, device=self.device)
-        # import pdb;pdb.set_trace()
+
         # Compute cross-entropy loss with label smoothing
         loss_itcl = (
             F.cross_entropy(sim_i2tl, targets, label_smoothing=0.1) +
