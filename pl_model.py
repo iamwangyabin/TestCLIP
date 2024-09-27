@@ -74,7 +74,7 @@ class CLIPLightningModule(LightningModule):
         ) / 2
 
         # Log the loss
-        self.log('train_loss', loss_itcl, on_step=True, on_epoch=True, prog_bar=True, logger=True, batch_size=batch_size)
+        self.log('train_loss', loss_itcl.item(), on_step=True, on_epoch=True, prog_bar=True, logger=True, batch_size=batch_size)
 
         return loss_itcl
 
