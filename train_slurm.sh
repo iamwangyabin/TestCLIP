@@ -10,6 +10,9 @@
 eval "$(conda shell.bash hook)"
 conda init bash
 conda activate cl
+master_addr=$(scontrol show hostnames "$SLURM_JOB_NODELIST" | head -n 1)
+export MASTER_ADDR=$master_addr
+export MASTER_PORT=13579
 
 export HF_HOME=/scratch/yw26g23/cache/
 export WANDB_MODE="offline"
