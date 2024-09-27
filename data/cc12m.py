@@ -52,6 +52,6 @@ class CC12M(Dataset):
             image = Image.open(buffer).convert('RGB')
             if self.transform:
                 image = self.transform(image)
-        del item 
+        del item
         return image, caption
 
