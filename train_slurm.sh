@@ -2,10 +2,10 @@
 
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=4
-#SBATCH --partition=swarm_a100
+#SBATCH --partition=scavenger_8h100
 #SBATCH --cpus-per-task=8
 #SBATCH --gres=gpu:4
-#SBATCH --time=60:00:00
+#SBATCH --time=12:00:00
 
 eval "$(conda shell.bash hook)"
 conda init bash
