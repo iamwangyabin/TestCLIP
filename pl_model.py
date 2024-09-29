@@ -39,14 +39,7 @@ class CLIPLightningModule(LightningModule):
         image_features, text_features = self.clip_model(image, text_long)
         return image_features, text_features
 
-    def training_step(self, batch, batch_idx):
-        """
-        Training step where loss is computed.
-        """
-        image, text_long = batch  # Assumes batch is a tuple (image, text_long)
-        text_long = longclip.tokenize(text_long, truncate=True).to(self.device)
 
-        image_features, text_features = self.forward(image, text_long)
         # image_features_all = self.all_gather(image_features)  # Shape: [world_size, batch_size, feature_dim]
         # text_features_all = self.all_gather(text_features)    # Shape: [world_size, batch_size, feature_dim]
         # Flatten the gathered features
@@ -55,6 +48,16 @@ class CLIPLightningModule(LightningModule):
 
         # sim_i2tl = torch.matmul(image_features, text_features_all.T)  # Image-to-Text
         # sim_tl2i = torch.matmul(image_features_all, text_features.T).T  # Text-to-Image
+
+    def training_step(self, batch, batch_idx):
+        """
+        Training step where loss is computed.
+        """
+        image, text_long = batch  # Assumes batch is a tuple (image, text_long)
+        text_long = longclip.tokenize(text_long, truncate=True).to(self.device)
+
+        image_features, text_features = self.forward(image, text_long)
+
         sim_i2tl = torch.matmul(image_features, text_features.T)  # Image-to-Text
         sim_tl2i = torch.matmul(image_features, text_features.T).T  # Text-to-Image
 
@@ -65,6 +68,7 @@ class CLIPLightningModule(LightningModule):
 
         # Determine batch size and world size
         batch_size = image.size(0)
+        print(batch_size)
         targets = torch.arange(batch_size, device=self.device)
 
         # Compute cross-entropy loss with label smoothing

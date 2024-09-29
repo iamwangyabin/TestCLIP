@@ -14,7 +14,7 @@ from torchvision import transforms
 Image.MAX_IMAGE_PIXELS = None
 
 class CC12M(Dataset):
-    def __init__(self, path_or_name='./cc12m', split='train', transform=None, single_caption=True):
+    def __init__(self, path_or_name='nebula/cc12m', split='train', transform=None, single_caption=True):
         self.raw_dataset = load_dataset(path_or_name)[split]
 
         if transform is None:
@@ -35,15 +35,6 @@ class CC12M(Dataset):
 
     def __len__(self):
         return self.length
-
-    # def __getitem__(self, index):
-    #     item = self.raw_dataset[index]
-    #     caption = item['txt']
-    #     buffer = io.BytesIO(item['webp'])
-    #     image = Image.open(buffer).convert('RGB')
-    #     if self.transform:
-    #         image = self.transform(image)
-    #     return image, caption
 
     def __getitem__(self, index):
         item = self.raw_dataset[index]
