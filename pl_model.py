@@ -25,6 +25,7 @@ def metrics(similarity: torch.Tensor) -> Tuple[torch.Tensor, torch.Tensor]:
     return img_acc, cap_acc
 
 
+
 class CLIPLightningModule(LightningModule):
     def __init__(self, args):
         super(CLIPLightningModule, self).__init__()
@@ -40,15 +41,6 @@ class CLIPLightningModule(LightningModule):
         return image_features, text_features
 
 
-        # image_features_all = self.all_gather(image_features)  # Shape: [world_size, batch_size, feature_dim]
-        # text_features_all = self.all_gather(text_features)    # Shape: [world_size, batch_size, feature_dim]
-        # Flatten the gathered features
-        # image_features_all = image_features_all.view(-1, image_features_all.size(-1))
-        # text_features_all = text_features_all.view(-1, text_features_all.size(-1))
-
-        # sim_i2tl = torch.matmul(image_features, text_features_all.T)  # Image-to-Text
-        # sim_tl2i = torch.matmul(image_features_all, text_features.T).T  # Text-to-Image
-
     def training_step(self, batch, batch_idx):
         """
         Training step where loss is computed.
@@ -58,8 +50,10 @@ class CLIPLightningModule(LightningModule):
 
         image_features, text_features = self.forward(image, text_long)
 
-        sim_i2tl = torch.matmul(image_features, text_features.T)  # Image-to-Text
-        sim_tl2i = torch.matmul(image_features, text_features.T).T  # Text-to-Image
+        # sim_i2tl = torch.matmul(image_features, text_features.T)  # Image-to-Text
+        # sim_tl2i = torch.matmul(image_features, text_features.T).T  # Text-to-Image
+        sim_i2tl = torch.matmul(image_features, text_features.t())
+        sim_tl2i = sim_i2tl.t()
 
         # Scale similarities using logit_scale
         logit_scale = self.clip_model.logit_scale.exp()
@@ -94,12 +88,12 @@ class CLIPLightningModule(LightningModule):
             loss_val = F.cross_entropy(sim, torch.arange(images.size(0), device=self.device))
 
         # Log validation loss
-        self.log('val_loss', loss_val, on_step=False, on_epoch=True, prog_bar=True, logger=True, batch_size=images.shape[0])
-
+        self.log('val_loss', loss_val, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log('img_acc', img_acc, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        self.log('cap_acc', cap_acc, on_step=False, on_epoch=True, prog_bar=True, logger=True)
 
     def configure_optimizers(self):
-        optparams = filter(lambda p: p.requires_grad, self.parameters())
-        optimizer = self.args.train.optimizer(optparams)
+        optimizer = self.args.train.optimizer(self.parameters())
         scheduler = self.args.train.scheduler(optimizer)
         return [optimizer], [scheduler]
 

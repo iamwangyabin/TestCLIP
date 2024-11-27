@@ -2,7 +2,6 @@ base_model: "ViT-B/32"
 name: "cc12m"
 log_scale: 0.0                # Initial logit scale (equivalent to np.log(1.0))
 
-
 train:
   gpu_ids: [0,1,2,3]
   train_epochs: 10
@@ -30,7 +29,7 @@ datasets:
           split: 'train', }
 
     batch_size: 512
-    loader_workers: 32
+    loader_workers: 12
     trsf:
       - _target_: torchvision.transforms.Resize
         size: 256
@@ -48,7 +47,7 @@ datasets:
           split: 'test', }
 
     batch_size: 128
-    loader_workers: 32
+    loader_workers: 12
     trsf:
       - _target_: torchvision.transforms.Resize
         size: 256

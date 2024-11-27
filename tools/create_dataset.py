@@ -136,7 +136,7 @@ dataset = load_dataset('poloclub/diffusiondb', '2m_all')
 
 import torch
 from torch.utils.data import Dataset
-from data import load_dataset
+from datasets import load_dataset
 raw_dataset = load_dataset('justram/yfcc100m_openai_subset')
 
 
@@ -148,7 +148,7 @@ export HF_HOME=/data/jwang/yb/cache
 
 import os
 import numpy as np
-from data import load_dataset,config
+from datasets import load_dataset,config
 dataset = load_dataset('drawthingsai/megalith-10m')
 
 
